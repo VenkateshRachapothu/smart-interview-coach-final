@@ -1,0 +1,36 @@
+/* App-level styles - global utilities are in index.css */
+
+/* Textarea focus state */
+textarea:focus, input:focus, select:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px var(--primary-glow) !important;
+}
+
+/* Button hover effects */
+button:not(:disabled):hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}
+
+button:not(:disabled):active {
+  transform: translateY(0);
+}
+
+/* Card hover */
+.card-hover:hover {
+  box-shadow: var(--shadow-lg) !important;
+  transform: translateY(-2px);
+}
+
+/* Link hover in nav */
+.nav-link:hover {
+  background: var(--primary-light) !important;
+  color: var(--primary) !important;
+}
+
+/* Responsive grid */
+@media (max-width: 640px) {
+  .grid-2 {
+    grid-template-columns: 1fr !important;
+  }
+}

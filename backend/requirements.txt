@@ -1,0 +1,11 @@
+Flask
+flask-cors
+flask-jwt-extended
+python-dotenv
+groq
+PyPDF2
+reportlab
+Werkzeug
+gunicorn
+pdfplumber
+google-auth
