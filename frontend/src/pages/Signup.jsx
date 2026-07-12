@@ -4,7 +4,10 @@ import Layout from "../components/Layout";
 import Navbar from "../components/Navbar";
 import Button from "../components/Button";
 
-const BASE_URL = "https://smart-interview-coach-ozbd.onrender.com";
+function getApiBase() {
+  if (import.meta.env.DEV) return "/api";
+  return import.meta.env.VITE_API_URL || "https://smart-interview-coach-ozbd.onrender.com";
+}
 
 function Signup() {
   const navigate = useNavigate();
@@ -17,7 +20,7 @@ function Signup() {
     e.preventDefault();
     try {
       setLoading(true);
-      const response = await fetch(`${BASE_URL}/signup`, {
+      const response = await fetch(`${getApiBase()}/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

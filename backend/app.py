@@ -3,6 +3,7 @@ from flask_cors import CORS
 from services.pdf_service import generate_pdf
 from flask import send_file
 from flask_jwt_extended import JWTManager
+import traceback
 
 from services.resume_parser import extract_text_from_pdf
 from services.skill_extractor import extract_skills
@@ -35,6 +36,7 @@ import sqlite3
 app = Flask(__name__)
 init_db()
 app.config["JWT_SECRET_KEY"] = "smart-interview-coach-secret"
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = False
 
 jwt = JWTManager(app)
 
@@ -620,19 +622,36 @@ def login():
 def learning():
     try:
         data = request.get_json()
-        role = data.get("role", "")
+        if not data:
+            return jsonify({"error": "Request body is missing or not valid JSON"}), 400
+
+        role = data.get("role", "").strip()
         weak_skills = data.get("weak_skills", [])
+
+        print(f"\n===== LEARNING REQUEST =====")
+        print(f"Role: {role}")
+        print(f"Weak Skills: {weak_skills}")
+        print(f"==========================\n")
 
         if not role:
             return jsonify({"error": "Role is required"}), 400
+
+        # Ensure weak_skills is always a list of strings
+        if isinstance(weak_skills, str):
+            weak_skills = [s.strip() for s in weak_skills.split(",") if s.strip()]
+        elif not isinstance(weak_skills, list):
+            weak_skills = []
+
+        if not weak_skills:
+            return jsonify({"error": "At least one skill is required"}), 400
 
         content = generate_learning_content(role, weak_skills)
         return jsonify(content)
 
     except Exception as e:
-        print("LEARNING ERROR:", e)
+        traceback.print_exc()
+        print(f"LEARNING ERROR: {str(e)}")
         return jsonify({"error": str(e)}), 500
-
 
 @app.route("/google-login", methods=["POST"])
 def google_login():

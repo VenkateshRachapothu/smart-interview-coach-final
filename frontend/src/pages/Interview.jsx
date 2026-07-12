@@ -6,6 +6,7 @@ import Card from "../components/Card";
 import Button from "../components/Button";
 import PageActions from "../components/PageActions";
 import { textareaStyle } from "../styles/shared";
+import { getStoredToken } from "../context/AuthContext";
 
 function Interview() {
   const navigate = useNavigate();
@@ -33,8 +34,12 @@ function Interview() {
     }
     try {
       setLoading(true);
-      const token = localStorage.getItem("token");
-      const response = await fetch("https://smart-interview-coach-ozbd.onrender.com/evaluate_answers", {
+      const token = getStoredToken();
+      if (!token) { navigate("/login", { replace: true }); return; }
+      const apiBase = import.meta.env.DEV
+        ? "/api"
+        : (import.meta.env.VITE_API_URL || "https://smart-interview-coach-ozbd.onrender.com");
+      const response = await fetch(`${apiBase}/evaluate_answers`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ role, questions: questionList, answers }),

@@ -4,6 +4,7 @@ import PageShell from "../components/PageShell";
 import StatCard from "../components/StatCard";
 import Card from "../components/Card";
 import Button from "../components/Button";
+import { getStoredToken } from "../context/AuthContext";
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -11,12 +12,19 @@ function Dashboard() {
   const [learning, setLearning] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    fetch("https://smart-interview-coach-ozbd.onrender.com/dashboard", {
+    const token = getStoredToken();
+    if (!token) { navigate("/login", { replace: true }); return; }
+    const apiBase = import.meta.env.DEV
+      ? "/api"
+      : (import.meta.env.VITE_API_URL || "https://smart-interview-coach-ozbd.onrender.com");
+    fetch(`${apiBase}/dashboard`, {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then((r) => r.json())
-      .then((data) => setStats(data))
+      .then((r) => {
+        if (r.status === 401) { navigate("/login", { replace: true }); return null; }
+        return r.json();
+      })
+      .then((data) => { if (data) setStats(data); })
       .catch((e) => console.error(e));
 
     // Load learning progress from localStorage

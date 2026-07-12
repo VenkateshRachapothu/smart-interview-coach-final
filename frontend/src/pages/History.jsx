@@ -4,6 +4,7 @@ import PageShell from "../components/PageShell";
 import Card from "../components/Card";
 import Button from "../components/Button";
 import { badgeStyle } from "../styles/shared";
+import { getStoredToken } from "../context/AuthContext";
 
 function History() {
   const navigate = useNavigate();
@@ -11,13 +12,20 @@ function History() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    fetch("https://smart-interview-coach-ozbd.onrender.com/history", {
+    const token = getStoredToken();
+    if (!token) { navigate("/login", { replace: true }); return; }
+    const apiBase = import.meta.env.DEV
+      ? "/api"
+      : (import.meta.env.VITE_API_URL || "https://smart-interview-coach-ozbd.onrender.com");
+    fetch(`${apiBase}/history`, {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then((r) => r.json())
+      .then((r) => {
+        if (r.status === 401) { navigate("/login", { replace: true }); return null; }
+        return r.json();
+      })
       .then((data) => {
-        setHistory(Array.isArray(data) ? data : []);
+        if (data) setHistory(Array.isArray(data) ? data : []);
         setLoading(false);
       })
       .catch((e) => { console.error(e); setLoading(false); });

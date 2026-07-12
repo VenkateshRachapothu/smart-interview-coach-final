@@ -1,10 +1,16 @@
 import { useState, useContext, useEffect } from "react";
-import { AuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { AuthContext, getStoredToken } from "../context/AuthContext";
 import PageShell from "../components/PageShell";
 import Card from "../components/Card";
 import Button from "../components/Button";
 
-const LOCAL_BACKEND = "/api";
+// In dev, Vite proxy rewrites /api → localhost:5000.
+// In production (Vercel), VITE_API_URL must be set to the Render backend URL.
+function getApiBase() {
+  if (import.meta.env.DEV) return "/api";
+  return import.meta.env.VITE_API_URL || "https://smart-interview-coach-ozbd.onrender.com";
+}
 
 const ROLES = [
   "Software Engineer", "Frontend Developer", "Backend Developer",
@@ -26,6 +32,7 @@ const STATUS_CONFIG = {
 
 function Learning() {
   const { token } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [role, setRole] = useState("");
   const [weakSkills, setWeakSkills] = useState("");
   const [loading, setLoading] = useState(false);
@@ -66,17 +73,48 @@ function Learning() {
     const skillList = weakSkills.split(",").map((s) => s.trim()).filter(Boolean);
     if (skillList.length === 0) { alert("Please enter at least one skill."); return; }
 
+    // Get token — use context value first, fall back to validated localStorage read
+    const authToken = token || getStoredToken();
+    if (!authToken) {
+      navigate("/login", { replace: true });
+      return;
+    }
+
     try {
       setLoading(true);
       setTopics([]);
-      const res = await fetch(`${LOCAL_BACKEND}/learning`, {
+
+      const apiBase = getApiBase();
+      console.log("API BASE =", apiBase);
+      const res = await fetch(`${apiBase}/learning`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken}`,
+        },
         body: JSON.stringify({ role, weak_skills: skillList }),
       });
-      const data = await res.json();
-      if (!res.ok) { alert(data.error || "Failed to generate content"); return; }
+
+      let data;
+      try {
+        data = await res.json();
+      } catch {
+        throw new Error(`Server returned non-JSON response (status ${res.status})`);
+      }
+
+      if (!res.ok) {
+        if (res.status === 401) {
+          navigate("/login", { replace: true });
+          return;
+        }
+        throw new Error(data.error || `Request failed with status ${res.status}`);
+      }
+
       const newTopics = data.topics || [];
+      if (newTopics.length === 0) {
+        throw new Error("No topics were returned. Please try again.");
+      }
+
       const initStatuses = Object.fromEntries(newTopics.map((_, i) => [i, "not_started"]));
       setTopics(newTopics);
       setStatuses(initStatuses);
@@ -84,8 +122,8 @@ function Learning() {
       setActiveTab(Object.fromEntries(newTopics.map((_, i) => [i, "overview"])));
       saveProgress(newTopics, initStatuses);
     } catch (err) {
-      console.error(err);
-      alert("Failed to generate learning content.");
+      console.error("Learning generation error:", err);
+      alert(`Failed to generate learning content: ${err.message}`);
     } finally {
       setLoading(false);
     }

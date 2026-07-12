@@ -6,9 +6,12 @@ import Layout from "../components/Layout";
 import Navbar from "../components/Navbar";
 import Button from "../components/Button";
 
-const BACKEND = "https://smart-interview-coach-ozbd.onrender.com";
-const LOCAL_BACKEND = "/api";
-
+// In dev, Vite proxy rewrites /api → localhost:5000.
+// In production (Vercel), VITE_API_URL must point to the Render backend.
+function getApiBase() {
+  if (import.meta.env.DEV) return "/api";
+  return import.meta.env.VITE_API_URL || "https://smart-interview-coach-ozbd.onrender.com";
+}
 function Login() {
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
@@ -21,13 +24,14 @@ function Login() {
     e.preventDefault();
     try {
       setLoading(true);
-      const response = await fetch(`${BACKEND}/login`, {
+      const response = await fetch(`${getApiBase()}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
       const data = await response.json();
       if (!response.ok) { alert(data.error || "Login failed"); return; }
+      if (!data.token) { alert("Login failed: no token received from server."); return; }
       login(data.user, data.token);
       navigate("/upload");
     } catch (error) {
@@ -46,13 +50,14 @@ function Login() {
       });
       if (!userInfoRes.ok) throw new Error("Failed to fetch Google user info");
       const userInfo = await userInfoRes.json();
-      const response = await fetch(`${LOCAL_BACKEND}/google-login`, {
+      const response = await fetch(`${getApiBase()}/google-login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: userInfo.name, email: userInfo.email }),
       });
       const data = await response.json();
       if (!response.ok) { alert(data.error || "Google login failed"); return; }
+      if (!data.token) { alert("Google login failed: no token received from server."); return; }
       login(data.user, data.token);
       navigate("/upload");
     } catch (error) {
