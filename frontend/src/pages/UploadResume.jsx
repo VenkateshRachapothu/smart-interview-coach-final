@@ -25,7 +25,7 @@ function UploadResume() {
       setUploading(true);
       const formData = new FormData();
       formData.append("resume", file);
-      const response = await fetch("https://smart-interview-coach-ozbd.onrender.com/upload_resume", {
+      const response = await fetch("http://127.0.0.1:5000/upload_resume", {
         method: "POST",
         body: formData,
       });

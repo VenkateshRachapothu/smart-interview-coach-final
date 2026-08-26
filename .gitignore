@@ -12,3 +12,14 @@ node_modules/
 
 # Build
 dist/
+
+# Project-generated files
+backend/groq_error.txt
+backend/learning_error.txt
+backend/uploads/
+
+# Windows
+desktop.ini
+
+# Local database
+backend/interview_history.db
