@@ -10,7 +10,7 @@ import App from "./App";
 import { InterviewProvider } from "./context/InterviewContext";
 import { AuthProvider } from "./context/AuthContext";
 
-const GOOGLE_CLIENT_ID = "278233411201-arvmbcd2r1p6kbg67d63fb56pk89dc84.apps.googleusercontent.com";
+const GOOGLE_CLIENT_ID = "556527218856-q7a7vf9ptstq2le2v6mvk7qp5g3s6oda.apps.googleusercontent.com";
 
 ReactDOM.createRoot(
   document.getElementById("root")
