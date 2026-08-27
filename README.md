@@ -4,7 +4,7 @@ An AI-powered mock interview platform that helps candidates prepare for technica
 
 ## 🚀 Live Demo
 
-👉 **[Try Smart Interview Coach](https://smart-interview-coach-final-p8a2r4pgl-venkatesh5.vercel.app/)**
+**[Try Smart Interview Coach](https://smart-interview-coach-final.vercel.app/)**
 
 ## ✨ Features
 
@@ -289,6 +289,8 @@ Git
 1. Clone Repository
 
 git clone https://github.com/VenkateshRachapothu/smart-interview-coach-final.git
+
+
 cd smart-interview-coach-final
 
 
@@ -361,13 +363,14 @@ Never commit API keys, passwords, .env files, or other secrets to GitHub.
 
 Deployed using Vercel.
 
-👉 **[Live Application](https://smart-interview-coach-final-p8a2r4pgl-venkatesh5.vercel.app/)**
+👉 **[Live Application](https://smart-interview-coach-final.vercel.app/)**
 
 ### Backend
 
 The Flask backend is deployed as a web service using Render.
 
 👉 **[Backend API](https://smart-interview-coach-final-backend.onrender.com/)**
+
 
 
 AI Service
