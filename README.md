@@ -72,51 +72,6 @@ An AI-powered mock interview platform that helps candidates prepare for technica
 
 
 
-# 📸 Application Screenshots
-
-## 🏠 Landing Page
-
-![Landing Page](screenshots/landing-page.png)
-
-## 🔐 Login
-
-![Login](screenshots/login.png)
-
-## 📄 Resume Upload
-
-![Resume Upload](screenshots/resume-upload.png)
-
-## 📊 ATS Resume Analysis
-
-![ATS Analysis](screenshots/ats-analysis.png)
-
-## 🎯 Role Selection
-
-![Role Selection](screenshots/role-selection.png)
-
-## 🎤 Mock Interview
-
-![Mock Interview](screenshots/mock-interview.png)
-
-## 📋 Interview Evaluation
-
-![Evaluation Answers](screenshots/evaluation-answers.png)
-
-## 📚 Personalized Learning
-
-![Learning Recommendations](screenshots/learning.png)
-
-## 📜 Interview History
-
-![Interview History](screenshots/history.png)
-
-## 📥 Download Summary
-
-![Download Summary](screenshots/download-summary.png)
-
----
-
-
 # 🏗️ System Architecture
 
 ```text
