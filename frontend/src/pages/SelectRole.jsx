@@ -25,11 +25,11 @@ function SelectRole() {
     try {
       setLoading(true);
       const resumeText = localStorage.getItem("resumeText");
-      const response = await fetch("http://127.0.0.1:5000/generate_questions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ role, skills, resume_text: resumeText }),
-      });
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/generate_questions`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ role, skills, resume_text: resumeText }),
+});
       const data = await response.json();
       setQuestions(data.questions);
       navigate("/interview");
