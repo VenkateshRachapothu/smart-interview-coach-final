@@ -38,8 +38,8 @@ function UploadResume() {
       localStorage.setItem("resumeAnalysis", JSON.stringify(data.analysis || {}));
       localStorage.setItem("resumeText", data.text);
     } catch (error) {
-      console.error(error);
-      alert("Failed to upload resume.");
+      console.error("UPLOAD ERROR:", error);
+      alert(`Upload error: ${error.message}`);
     } finally {
       setUploading(false);
     }
