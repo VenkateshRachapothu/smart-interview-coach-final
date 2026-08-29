@@ -25,10 +25,20 @@ function UploadResume() {
       setUploading(true);
       const formData = new FormData();
       formData.append("resume", file);
-      const response = await fetch("https://smart-interview-coach-final-backend.onrender.com/upload_resume", {
-        method: "POST",
-        body: formData,
-      });
+      console.log("Sending resume upload request...");
+
+const response = await fetch(
+  "https://smart-interview-coach-final-backend.onrender.com/upload_resume",
+  {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+    },
+    body: formData,
+  }
+);
+
+console.log("Upload response status:", response.status);
       const data = await response.json();
       if (!response.ok) { alert(data.error || "Upload failed"); return; }
       setResumeText(data.text || "");
