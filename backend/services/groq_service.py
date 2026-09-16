@@ -778,7 +778,7 @@ def _extract_json(text):
 # GENERATE INTERVIEW QUESTIONS
 # ============================================================
 
-def generate_questions(role, skills, resume_text):
+def generate_questions(role, skills, resume_text,difficulty="Medium"):
 
     if not isinstance(skills, list):
         skills = [str(skills)]
@@ -793,11 +793,16 @@ Candidate Profile:
 Target Role:
 {role}
 
+Interview Difficulty:
+{difficulty}
+
 Skills:
 {", ".join(skills)}
 
 Resume:
 {resume_text}
+
+Instructions:
 
 Instructions:
 
@@ -810,10 +815,14 @@ Instructions:
    - Certifications
    - Technologies mentioned in the resume
 5. Questions should be suitable for campus placements.
-6. Number questions from 1 to 10.
-7. Return only the questions.
-8. Do not provide answers.
-9. Do not provide explanations.
+6. Adjust the technical depth and complexity according to the selected difficulty:
+   - Easy: basic concepts, simple questions, beginner-friendly.
+   - Medium: moderate technical depth, practical concepts, campus-placement level.
+   - Hard: advanced concepts, deeper reasoning, challenging technical questions.
+7. Number questions from 1 to 10.
+8. Return only the questions.
+9. Do not provide answers.
+10. Do not provide explanations.
 """
 
     response = client.chat.completions.create(

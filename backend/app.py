@@ -171,10 +171,16 @@ def generate_interview_questions():
             ""
         )
 
+        difficulty = data.get(
+            "difficulty",
+            "Medium"
+)
+
         questions = generate_questions(
             role,
             skills,
-            resume_text
+            resume_text,
+            difficulty
         )
 
         return jsonify({
