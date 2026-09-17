@@ -15,6 +15,10 @@ function UploadResume() {
   const [file, setFile] = useState(null);
   const [resumeText, setResumeText] = useState("");
   const [uploading, setUploading] = useState(false);
+
+  const [company, setCompany] = useState("");
+  const [jobDescription, setJobDescription] = useState("");
+
   const [showText, setShowText] = useState(false);
   const [dragOver, setDragOver] = useState(false);
 
@@ -23,19 +27,34 @@ function UploadResume() {
     setSkills,
     resumeAnalysis,
     setResumeAnalysis,
+    setCompany: setContextCompany,
+    setJobDescription: setContextJobDescription,
   } = useContext(InterviewContext);
 
   const handleUpload = async () => {
-    if (!file) {
-      alert("Please select a PDF resume.");
-      return;
-    }
+  if (!company.trim()) {
+    alert("Please enter the company name.");
+    return;
+  }
 
-    try {
-      setUploading(true);
+  if (!jobDescription.trim()) {
+    alert("Please enter the job description.");
+    return;
+  }
 
-      const formData = new FormData();
-      formData.append("resume", file);
+  if (!file) {
+    alert("Please select a PDF resume.");
+    return;
+  }
+
+  try {
+    setUploading(true);
+
+    const formData = new FormData();
+
+    formData.append("resume", file);
+    formData.append("company", company);
+    formData.append("job_description", jobDescription);
 
       console.log("Sending resume:", file.name, file.size);
 
@@ -94,9 +113,7 @@ function UploadResume() {
     } catch (error) {
       console.error("UPLOAD ERROR:", error);
 
-      alert(
-        `Upload error: ${error.message}`
-      );
+      alert(`Upload error: ${error.message}`);
     } finally {
       setUploading(false);
     }
@@ -128,7 +145,7 @@ function UploadResume() {
     <PageShell
       step={1}
       title="Upload Resume"
-      subtitle="Upload your PDF to extract skills and run ATS analysis"
+      subtitle="Add your job details and upload your PDF resume for JD-based ATS analysis"
       actions={
         resumeAnalysis ? (
           <PageActions>
@@ -139,179 +156,260 @@ function UploadResume() {
         ) : null
       }
     >
+      {/* Job Information */}
+<Card
+  title="💼 Job Information"
+  subtitle="Tell us about the job you're applying for"
+>
+  <div
+    style={{
+      display: "grid",
+      gridTemplateColumns: "minmax(220px, 0.8fr) minmax(300px, 2fr)",
+      gap: 18,
+      alignItems: "start",
+    }}
+  >
+    {/* Company */}
+    <div>
+      <label
+        style={{
+          display: "block",
+          marginBottom: 7,
+          fontSize: 13,
+          fontWeight: 600,
+          color: "var(--text)",
+        }}
+      >
+        Company Name
+      </label>
+
+      <input
+        type="text"
+        value={company}
+        onChange={(e) => {
+          setCompany(e.target.value);
+          setContextCompany(e.target.value);
+        }}
+        placeholder="e.g. Google, Flipkart, Microsoft"
+        style={{
+          width: "100%",
+          height: 44,
+          padding: "0 14px",
+          borderRadius: 10,
+          border: "1px solid var(--border)",
+          background: "var(--bg2)",
+          color: "var(--text)",
+          fontSize: 14,
+          boxSizing: "border-box",
+          outline: "none",
+        }}
+      />
+    </div>
+
+    {/* Job Description */}
+    <div>
+      <label
+        style={{
+          display: "block",
+          marginBottom: 7,
+          fontSize: 13,
+          fontWeight: 600,
+          color: "var(--text)",
+        }}
+      >
+        Job Description
+      </label>
+
+      <textarea
+        value={jobDescription}
+        onChange={(e) => {
+          setJobDescription(e.target.value);
+          setContextJobDescription(e.target.value);
+        }}
+        placeholder="Paste the complete job description here..."
+        rows={5}
+        style={{
+          width: "100%",
+          padding: "12px 14px",
+          borderRadius: 10,
+          border: "1px solid var(--border)",
+          background: "var(--bg2)",
+          color: "var(--text)",
+          fontSize: 14,
+          lineHeight: 1.5,
+          resize: "vertical",
+          boxSizing: "border-box",
+          outline: "none",
+          fontFamily: "inherit",
+        }}
+      />
+    </div>
+  </div>
+</Card>
+
       {/* Upload Zone */}
-      <Card title="📄 Upload your resume">
-        <div
-          onDragOver={(e) => {
-            e.preventDefault();
-            setDragOver(true);
-          }}
-          onDragLeave={() => setDragOver(false)}
-          onDrop={handleDrop}
+<Card
+  title="📄 Upload Resume"
+  subtitle="Upload your PDF resume to compare it with the job description"
+>
+  <div
+    onDragOver={(e) => {
+      e.preventDefault();
+      setDragOver(true);
+    }}
+    onDragLeave={() => setDragOver(false)}
+    onDrop={handleDrop}
+    style={{
+      border: `2px dashed ${
+        dragOver ? "var(--primary)" : "var(--border)"
+      }`,
+      borderRadius: 14,
+      padding: "28px 20px",
+      textAlign: "center",
+      background: dragOver
+        ? "var(--primary-light)"
+        : "var(--bg2)",
+      transition: "all 0.2s ease",
+    }}
+  >
+    <div
+      style={{
+        fontSize: 38,
+        marginBottom: 8,
+      }}
+    >
+      📄
+    </div>
+
+    <p
+      style={{
+        margin: "0 0 5px",
+        fontSize: 15,
+        fontWeight: 600,
+        color: "var(--text)",
+      }}
+    >
+      Drop your resume here
+    </p>
+
+    <p
+      style={{
+        margin: "0 0 15px",
+        fontSize: 12,
+        color: "var(--text-muted)",
+      }}
+    >
+      PDF format • Upload your latest resume
+    </p>
+
+    <label
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 7,
+        background: "var(--gradient)",
+        color: "#fff",
+        padding: "10px 18px",
+        borderRadius: 9,
+        cursor: "pointer",
+        fontWeight: 600,
+        fontSize: 13,
+        boxShadow: "0 4px 15px var(--primary-glow)",
+      }}
+    >
+      📂 Browse Resume
+
+      <input
+        type="file"
+        accept=".pdf"
+        aria-label="Upload PDF resume"
+        onChange={(e) => setFile(e.target.files[0])}
+        style={{
+          display: "none",
+        }}
+      />
+    </label>
+  </div>
+
+  {file && (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 12,
+        marginTop: 14,
+        padding: "11px 14px",
+        background: "var(--primary-light)",
+        borderRadius: 10,
+        border: "1px solid var(--primary)33",
+      }}
+    >
+      <span style={{ fontSize: 20 }}>📄</span>
+
+      <div style={{ flex: 1 }}>
+        <p
           style={{
-            border: `2px dashed ${
-              dragOver
-                ? "var(--primary)"
-                : "var(--border)"
-            }`,
-            borderRadius: "var(--radius-md)",
-            padding: "40px 24px",
-            textAlign: "center",
-            background: dragOver
-              ? "var(--primary-light)"
-              : "var(--bg2)",
-            transition: "all 0.2s ease",
-            cursor: "pointer",
+            margin: 0,
+            fontWeight: 600,
+            fontSize: 13,
+            color: "var(--text)",
           }}
         >
-          <div
-            style={{
-              fontSize: 48,
-              marginBottom: 12,
-            }}
-          >
-            📁
-          </div>
+          {file.name}
+        </p>
 
-          <p
-            style={{
-              color: "var(--text)",
-              fontWeight: 600,
-              fontSize: 16,
-              marginBottom: 6,
-            }}
-          >
-            Drag & drop your PDF here
-          </p>
+        <p
+          style={{
+            margin: "2px 0 0",
+            fontSize: 11,
+            color: "var(--text-muted)",
+          }}
+        >
+          {(file.size / 1024).toFixed(1)} KB
+        </p>
+      </div>
 
-          <p
-            style={{
-              color: "var(--text-muted)",
-              fontSize: 13,
-              marginBottom: 20,
-            }}
-          >
-            or click to browse files
-          </p>
+      <Button
+        onClick={handleUpload}
+        disabled={uploading}
+        size="sm"
+      >
+        {uploading ? "⏳ Analyzing..." : "🚀 Analyze Resume"}
+      </Button>
+    </div>
+  )}
 
-          <label
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 8,
-              background: "var(--gradient)",
-              color: "#fff",
-              padding: "10px 20px",
-              borderRadius: "var(--radius-sm)",
-              cursor: "pointer",
-              fontWeight: 600,
-              fontSize: 14,
-              boxShadow:
-                "0 4px 15px var(--primary-glow)",
-            }}
-          >
-            📂 Browse PDF
+  {uploading && (
+    <div
+      style={{
+        textAlign: "center",
+        padding: "18px 0 4px",
+      }}
+    >
+      <div
+        style={{
+          width: 32,
+          height: 32,
+          border: "3px solid var(--border)",
+          borderTop: "3px solid var(--primary)",
+          borderRadius: "50%",
+          animation: "spin 0.8s linear infinite",
+          margin: "0 auto 10px",
+        }}
+      />
 
-            <input
-              type="file"
-              accept=".pdf"
-              aria-label="Upload PDF resume"
-              onChange={(e) =>
-                setFile(e.target.files[0])
-              }
-              style={{
-                display: "none",
-              }}
-            />
-          </label>
-        </div>
-
-        {file && (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 12,
-              marginTop: 16,
-              padding: "12px 16px",
-              background: "var(--primary-light)",
-              borderRadius: "var(--radius-sm)",
-              border:
-                "1px solid var(--primary)33",
-            }}
-          >
-            <span style={{ fontSize: 20 }}>
-              📄
-            </span>
-
-            <div style={{ flex: 1 }}>
-              <p
-                style={{
-                  margin: 0,
-                  fontWeight: 600,
-                  fontSize: 14,
-                  color: "var(--text)",
-                }}
-              >
-                {file.name}
-              </p>
-
-              <p
-                style={{
-                  margin: 0,
-                  fontSize: 12,
-                  color: "var(--text-muted)",
-                }}
-              >
-                {(file.size / 1024).toFixed(1)} KB
-              </p>
-            </div>
-
-            <Button
-              onClick={handleUpload}
-              disabled={uploading}
-              size="sm"
-            >
-              {uploading
-                ? "⏳ Uploading..."
-                : "🚀 Analyze"}
-            </Button>
-          </div>
-        )}
-
-        {uploading && (
-          <div
-            style={{
-              textAlign: "center",
-              padding: "24px 0",
-            }}
-          >
-            <div
-              style={{
-                width: 40,
-                height: 40,
-                border:
-                  "4px solid var(--border)",
-                borderTop:
-                  "4px solid var(--primary)",
-                borderRadius: "50%",
-                animation:
-                  "spin 0.8s linear infinite",
-                margin: "0 auto 12px",
-              }}
-            />
-
-            <p
-              style={{
-                color: "var(--text-muted)",
-                fontSize: 14,
-              }}
-            >
-              🤖 Analyzing your resume with AI...
-            </p>
-          </div>
-        )}
-      </Card>
+      <p
+        style={{
+          margin: 0,
+          color: "var(--text-muted)",
+          fontSize: 13,
+        }}
+      >
+        🤖 Comparing your resume with the job description...
+      </p>
+    </div>
+  )}
+</Card>
 
       {/* ATS Analysis */}
       {resumeAnalysis && (
@@ -450,6 +548,43 @@ function UploadResume() {
                 </p>
               </div>
             )}
+
+            {resumeAnalysis.matching_skills && (
+  <div
+    style={{
+      background:
+        "var(--success-light)",
+      padding: "12px 16px",
+      borderRadius:
+        "var(--radius-sm)",
+      borderLeft:
+        "3px solid var(--success)",
+    }}
+  >
+    <p
+      style={{
+        margin: 0,
+        fontSize: 13,
+        fontWeight: 700,
+        color: "var(--success)",
+        marginBottom: 4,
+      }}
+    >
+      🎯 Matching Skills
+    </p>
+
+    <p
+      style={{
+        margin: 0,
+        fontSize: 13,
+        lineHeight: 1.6,
+        color: "var(--text)",
+      }}
+    >
+      {resumeAnalysis.matching_skills}
+    </p>
+  </div>
+)}
 
             {resumeAnalysis.missing_skills && (
               <div

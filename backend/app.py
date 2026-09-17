@@ -94,6 +94,16 @@ def upload_resume():
 
         file = request.files["resume"]
 
+        company = request.form.get(
+            "company",
+            ""
+        ).strip()
+
+        job_description = request.form.get(
+            "job_description",
+            ""
+        ).strip()
+
         filepath = os.path.join(
             UPLOAD_FOLDER,
             file.filename
@@ -110,8 +120,18 @@ def upload_resume():
         )
 
         analysis = analyze_resume(
-            extracted_text
+            extracted_text,
+            job_description,
+            company
         )
+
+        print("\n===== JOB INFORMATION =====")
+        print("Company:", company)
+        print(
+            "Job Description:",
+            job_description[:500]
+        )
+        print("===========================\n")
 
         print("\n===== RESUME TEXT =====")
         print(extracted_text[:500])

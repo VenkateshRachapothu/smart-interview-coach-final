@@ -6,13 +6,16 @@ export const InterviewProvider = ({ children }) => {
 
   const [skills, setSkills] = useState([]);
   const [role, setRole] = useState("");
+  const [company, setCompany] = useState("");
+  const [jobDescription, setJobDescription] = useState("");
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState([]);
   const [results, setResults] = useState([]);
+
   const [
-  resumeAnalysis,
-  setResumeAnalysis
-] = useState(null);
+    resumeAnalysis,
+    setResumeAnalysis
+  ] = useState(null);
 
   return (
     <InterviewContext.Provider
@@ -22,6 +25,12 @@ export const InterviewProvider = ({ children }) => {
 
         role,
         setRole,
+
+        company,
+        setCompany,
+
+        jobDescription,
+        setJobDescription,
 
         questions,
         setQuestions,
@@ -33,7 +42,7 @@ export const InterviewProvider = ({ children }) => {
         setResults,
 
         resumeAnalysis,
-setResumeAnalysis,
+        setResumeAnalysis,
       }}
     >
       {children}

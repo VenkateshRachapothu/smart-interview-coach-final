@@ -34,11 +34,6 @@ const ROLES = [
     desc: "Python, statistics, machine learning, data analysis",
   },
   {
-    name: "Data Engineer",
-    icon: "🔧",
-    desc: "SQL, ETL, data pipelines, databases",
-  },
-  {
     name: "Full Stack Developer",
     icon: "🌐",
     desc: "Frontend, backend, APIs, databases",
@@ -47,11 +42,6 @@ const ROLES = [
     name: "Backend Developer",
     icon: "⚙️",
     desc: "APIs, Python, Java, databases, server development",
-  },
-  {
-    name: "Frontend Developer",
-    icon: "🎨",
-    desc: "HTML, CSS, JavaScript, React",
   },
   {
     name: "Generative AI Engineer",

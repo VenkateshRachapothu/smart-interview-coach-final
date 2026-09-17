@@ -1391,7 +1391,11 @@ Rules:
 # ANALYZE RESUME
 # ============================================================
 
-def analyze_resume(resume_text):
+def analyze_resume(
+    resume_text,
+    job_description="",
+    company=""
+):
 
     if not resume_text:
         raise ValueError(
@@ -1401,11 +1405,34 @@ def analyze_resume(resume_text):
     prompt = f"""
 You are an ATS Resume Analyzer.
 
-Analyze the following resume.
+Your task is to analyze how well the candidate's resume
+matches a specific company's job description.
+
+Company:
+
+{company}
+
+Job Description:
+
+{job_description}
 
 Resume:
 
 {resume_text}
+
+Compare the resume against the job description.
+
+Focus especially on:
+
+- Required technical skills
+- Required soft skills
+- Experience
+- Education
+- Tools and technologies
+- Keywords
+- Responsibilities
+- Qualifications
+- Relevant projects
 
 Return ONLY valid JSON.
 
@@ -1419,6 +1446,7 @@ Return exactly:
     "ats_score": 0,
     "strengths": "",
     "weaknesses": "",
+    "matching_skills": "",
     "missing_skills": "",
     "suggestions": ""
 }}
@@ -1426,11 +1454,22 @@ Return exactly:
 Rules:
 
 1. ats_score must be between 0 and 100.
-2. strengths should mention good resume points.
-3. weaknesses should mention missing areas.
-4. missing_skills should mention important skills not found.
-5. suggestions should give actionable improvements.
-6. Return only JSON.
+2. Calculate the score based primarily on how well the resume
+   matches the job description.
+3. Do not give a high score simply because the resume is well written.
+4. strengths should describe the candidate's relevant matches
+   with the job description.
+5. weaknesses should describe important gaps between the resume
+   and the job description.
+6. matching_skills should list important skills/keywords that
+   appear in both the resume and job description.
+7. missing_skills should list important job requirements that
+   are missing or not clearly demonstrated in the resume.
+8. suggestions should provide practical improvements to better
+   match the job description.
+9. If the company name is provided, consider the company context,
+   but do not invent company-specific requirements.
+10. Return only valid JSON.
 """
 
     text = ""
@@ -1465,6 +1504,7 @@ Rules:
             "ats_score",
             "strengths",
             "weaknesses",
+            "matching_skills",
             "missing_skills",
             "suggestions"
         ]
@@ -1498,14 +1538,17 @@ Rules:
         )
 
         try:
+
             with open(
                 "ats_error.txt",
                 "w",
                 encoding="utf-8"
             ) as f:
+
                 f.write(
                     text if text else str(e)
                 )
+
         except Exception:
             pass
 
